@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-commerce Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .chart-container {
+      margin-top: 40px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📊 E-commerce Dashboard</h1>
+
+<div class="grid">
+  <div class="card"><h3>Total Revenue</h3><p id="revenue">Loading...</p></div>
+  <div class="card"><h3>Top Category</h3><p id="category">Loading...</p></div>
+  <div class="card"><h3>Top Customer</h3><p id="customer">Loading...</p></div>
+  <div class="card"><h3>Best Month</h3><p id="month">Loading...</p></div>
+</div>
+
+<div class="chart-container">
+  <canvas id="revenueChart"></canvas>
+</div>
+
+<script>
+fetch("http://127.0.0.1:5000/data")
+  .then(res => res.json())
+  .then(data => {
+
+    document.getElementById("revenue").innerText = "₹" + data.totalRevenue;
+    document.getElementById("category").innerText = data.topCategory;
+    document.getElementById("customer").innerText = data.topCustomer;
+    document.getElementById("month").innerText = data.highestMonth;
+
+    const ctx = document.getElementById("revenueChart");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.categories,
+        datasets: [{
+          label: "Revenue by Category",
+          data: data.categoryRevenue
+        }]
+      }
+    });
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error loading data");
+  });
+</script>
+
+</body>
+</html>
